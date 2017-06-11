@@ -14,6 +14,9 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 
+#Solution Files
+*.sln
+
 # Windows shortcuts
 *.lnk
 
@@ -45,3 +48,6 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+/packages
+/CSharp Lua Scripting Engine/bin
+/CSharp Lua Scripting Engine/obj
