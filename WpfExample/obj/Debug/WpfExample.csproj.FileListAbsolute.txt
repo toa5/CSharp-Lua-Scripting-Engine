@@ -1,0 +1,23 @@
+C:\Users\Temdog007\Documents\GitHub\CSharp-Lua-Scripting-Engine\WpfExample\obj\Debug\WpfExample.csprojResolveAssemblyReference.cache
+C:\Users\Temdog007\Documents\GitHub\CSharp-Lua-Scripting-Engine\WpfExample\obj\Debug\MainWindow.baml
+C:\Users\Temdog007\Documents\GitHub\CSharp-Lua-Scripting-Engine\WpfExample\obj\Debug\MainWindow.g.cs
+C:\Users\Temdog007\Documents\GitHub\CSharp-Lua-Scripting-Engine\WpfExample\obj\Debug\App.g.cs
+C:\Users\Temdog007\Documents\GitHub\CSharp-Lua-Scripting-Engine\WpfExample\obj\Debug\WpfExample_MarkupCompile.cache
+C:\Users\Temdog007\Documents\GitHub\CSharp-Lua-Scripting-Engine\WpfExample\obj\Debug\WpfExample.g.resources
+C:\Users\Temdog007\Documents\GitHub\CSharp-Lua-Scripting-Engine\WpfExample\obj\Debug\WpfExample.Properties.Resources.resources
+C:\Users\Temdog007\Documents\GitHub\CSharp-Lua-Scripting-Engine\WpfExample\obj\Debug\WpfExample.csproj.GenerateResource.Cache
+C:\Users\Temdog007\Documents\GitHub\CSharp-Lua-Scripting-Engine\WpfExample\Executables\Debug\WpfExample.exe.config
+C:\Users\Temdog007\Documents\GitHub\CSharp-Lua-Scripting-Engine\WpfExample\Executables\Debug\WpfExample.exe
+C:\Users\Temdog007\Documents\GitHub\CSharp-Lua-Scripting-Engine\WpfExample\Executables\Debug\WpfExample.pdb
+C:\Users\Temdog007\Documents\GitHub\CSharp-Lua-Scripting-Engine\WpfExample\Executables\Debug\CSharp Lua Scripting Engine.dll
+C:\Users\Temdog007\Documents\GitHub\CSharp-Lua-Scripting-Engine\WpfExample\Executables\Debug\KeraLua.dll
+C:\Users\Temdog007\Documents\GitHub\CSharp-Lua-Scripting-Engine\WpfExample\Executables\Debug\NLua.dll
+C:\Users\Temdog007\Documents\GitHub\CSharp-Lua-Scripting-Engine\WpfExample\Executables\Debug\CSharp Lua Scripting Engine.pdb
+C:\Users\Temdog007\Documents\GitHub\CSharp-Lua-Scripting-Engine\WpfExample\obj\Debug\WpfExample.exe
+C:\Users\Temdog007\Documents\GitHub\CSharp-Lua-Scripting-Engine\WpfExample\obj\Debug\WpfExample.pdb
+C:\Users\Temdog007\Documents\GitHub\CSharp-Lua-Scripting-Engine\WpfExample\Executables\Debug\Scripts\Values.lua
+C:\Users\Temdog007\Documents\GitHub\CSharp-Lua-Scripting-Engine\WpfExample\obj\Debug\WpfExample_Content.g.cs
+C:\Users\Temdog007\Documents\GitHub\CSharp-Lua-Scripting-Engine\Executables\Debug\Scripts\Values.lua
+C:\Users\Temdog007\Documents\GitHub\CSharp-Lua-Scripting-Engine\Executables\Debug\WpfExample.exe.config
+C:\Users\Temdog007\Documents\GitHub\CSharp-Lua-Scripting-Engine\Executables\Debug\WpfExample.exe
+C:\Users\Temdog007\Documents\GitHub\CSharp-Lua-Scripting-Engine\Executables\Debug\WpfExample.pdb

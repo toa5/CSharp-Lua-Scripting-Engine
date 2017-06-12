@@ -4,7 +4,15 @@ using System;
 
 namespace CSharp_Lua_Scripting_Engine
 {
-    public class Script : IDisposable
+    public enum LuaExceptionReaction
+    {
+        None,
+        LogToConsole,
+        LogToConsoleElseThrow,
+        Throw
+    }
+
+    public class Script<T> : IDisposable
     {
         private readonly Func<Lua> _getLua;
         private Lua _lua;
@@ -15,8 +23,14 @@ namespace CSharp_Lua_Scripting_Engine
             _lua = getLua();
         }
 
+        public ILuaConsole Console { get; set; }
+
+        public LuaExceptionReaction LuaExceptionReaction { get; set; } = LuaExceptionReaction.LogToConsole;
+
         public bool NeedsReload { get; set; } = false;
-        public ScriptType ScriptType { get; set; }
+
+        public T ScriptType { get; set; }
+
         public object this[string key]
         {
             get
@@ -29,10 +43,17 @@ namespace CSharp_Lua_Scripting_Engine
             }
         }
 
-        public object[] Run(string methodName, params object[] args)
+        public object[] Run(string methodName, params T[] args)
         {
-            var func = _lua[methodName] as LuaFunction;
-            return func?.Call(args);
+            try
+            {
+                return _lua.Run(methodName, args);
+            }
+            catch(Exception e)
+            {
+                HandleException(e);
+            }
+            return null;
         }
 
         public void Update()
@@ -40,8 +61,42 @@ namespace CSharp_Lua_Scripting_Engine
             if(_lua == null || NeedsReload)
             {
                 _lua?.Dispose();
-                _lua = _getLua();
-                NeedsReload = false;
+                try
+                {
+                    // If the file got updated with a lua script with errors, don't crash
+                    // Handle the exception, then set to null and try again later
+                    _lua = _getLua();
+                    NeedsReload = false;
+                }
+                catch(Exception e)
+                {
+                    HandleException(e);
+                    _lua = null;
+                }
+            }
+        }
+
+        private void HandleException(Exception e)
+        {
+            switch (LuaExceptionReaction)
+            {
+                case LuaExceptionReaction.LogToConsole:
+                    Console?.Write(string.Format("Lua Error {0}", e));
+                    break;
+                case LuaExceptionReaction.LogToConsoleElseThrow:
+                    if (Console != null)
+                    {
+                        Console.Write(string.Format("Lua Error {0}", e));
+                    }
+                    else
+                    {
+                        throw e;
+                    }
+                    break;
+                case LuaExceptionReaction.Throw:
+                    throw e;
+                default:
+                    break;
             }
         }
 

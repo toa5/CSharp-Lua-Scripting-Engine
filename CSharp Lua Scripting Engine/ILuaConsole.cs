@@ -1,19 +1,13 @@
 ﻿namespace CSharp_Lua_Scripting_Engine
 {
-    public interface IConsole
+    public interface ILuaConsole
     {
         /// <summary>
         /// Writes the message
         /// </summary>
         /// <param name="message"></param>
         void Write(string message);
-
-        /// <summary>
-        /// Writes the message as a line
-        /// </summary>
-        /// <param name="message"></param>
-        void WriteLine(string message);
-
+        
         /// <summary>
         /// Deletes the message at an index
         /// </summary>

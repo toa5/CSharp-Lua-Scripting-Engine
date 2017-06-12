@@ -6,18 +6,22 @@ namespace CSharp_Lua_Scripting_Engine
 {
     public delegate void ScriptReloadedEvent(ScriptReloadedEventArgs args);
 
-    public interface IScriptingEngine
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="T">The script type</typeparam>
+    public interface IScriptingEngine<T>
     {
         /// <summary>
         /// Gets all the scripts
         /// </summary>
         /// <returns></returns>
-        IEnumerable<Script> AllScripts { get; }
+        IEnumerable<Script<T>> AllScripts { get; }
 
         /// <summary>
-        /// Console for writing Script errors
+        /// Console for writing Script<T> errors
         /// </summary>
-        IConsole Console { get; }
+        ILuaConsole Console { get; }
 
         /// <summary>
         /// The place where the updated scripts will be saved when reloading
@@ -34,30 +38,38 @@ namespace CSharp_Lua_Scripting_Engine
         /// </summary>
         /// <param name="key"></param>
         /// <param name="type"></param>
-        /// <param name="lua"></param>
+        /// <param name="script"></param>
         /// <returns>if true, the script was loaded, else it was pulled from a cache</returns>
-        bool GetScript(IScriptable key, ScriptType type, out Script lua);
+        bool GetScript(IScriptable key, T scriptType, out Script<T> script);
+
+        /// <summary>
+        /// Gets the script
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="scriptType"></param>
+        /// <returns></returns>
+        Script<T> GetScript(IScriptable key, T scriptType);
 
         /// <summary>
         /// Gets all scripts based on the predicate
         /// </summary>
         /// <param name="key"></param>
-        /// <returns>Sequence of Script objects</returns>
-        IEnumerable<Script> GetScripts(Predicate<IScriptable> predicate);
+        /// <returns>Sequence of Script<T> objects</returns>
+        IEnumerable<Script<T>> GetScripts(Predicate<IScriptable> predicate);
 
         /// <summary>
         /// Gets all scripts based on the predicate
         /// </summary>
         /// <param name="key"></param>
-        /// <returns>Sequence of Script objects</returns>
-        IEnumerable<Script> GetScripts(Predicate<ScriptType> predicate);
+        /// <returns>Sequence of Script<T> objects</returns>
+        IEnumerable<Script<T>> GetScripts(Predicate<T> predicate);
 
         /// <summary>
         /// Gets all scripts based on the predicate
         /// </summary>
         /// <param name="key"></param>
-        /// <returns>Sequence of Script objects</returns>
-        IEnumerable<Script> GetScripts(Predicate<Script> predicate);
+        /// <returns>Sequence of Script<T> objects</returns>
+        IEnumerable<Script<T>> GetScripts(Predicate<Script<T>> predicate);
         /// <summary>
         /// Reloads all the scripts
         /// </summary>
@@ -66,7 +78,7 @@ namespace CSharp_Lua_Scripting_Engine
         /// <summary>
         /// Reloads the scripts based on the predicate
         /// </summary>
-        void ReloadScripts(Predicate<ScriptType> predicate);
+        void ReloadScripts(Predicate<T> predicate);
 
         /// <summary>
         /// Reloads the scripts based on the predicate
@@ -75,7 +87,7 @@ namespace CSharp_Lua_Scripting_Engine
         /// <summary>
         /// Reloads the scripts based on the predicate
         /// </summary>
-        void ReloadScripts(Predicate<Script> predicate);
+        void ReloadScripts(Predicate<Script<T>> predicate);
 
         /// <summary>
         /// Updates
