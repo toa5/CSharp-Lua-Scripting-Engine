@@ -1,24 +1,21 @@
 ﻿using CSharp_Lua_Scripting_Engine;
 using NLua;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
 
 namespace WpfExample
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, IScriptable, ILuaConsole, INotifyPropertyChanged
+    public partial class MainWindow : Window, IScriptingEngineConsole, INotifyPropertyChanged
     {
-        private DefaultScriptingEngine<object> _engine;
+        private DefaultScriptingEngine<Script> _engine;
 
         private ObservableCollection<Tuple<object, object>> _logs = new ObservableCollection<Tuple<object, object>>();
 
@@ -28,7 +25,7 @@ namespace WpfExample
         {
             InitializeComponent();
 
-            _engine = new DefaultScriptingEngine<object>(this)
+            _engine = new DefaultScriptingEngine<Script>(this)
             {
                 // Source will need to be changed to match your source directory
                 SourceDirectory = @"C:\Users\Temdog007\Documents\GitHub\CSharp-Lua-Scripting-Engine\WpfExample\Scripts",
@@ -52,8 +49,6 @@ namespace WpfExample
             }
         }
 
-        public ScriptableType ScriptableType => ScriptableType.File;
-
         public void Clear()
         {
             Logs.Clear();
@@ -64,14 +59,14 @@ namespace WpfExample
             Logs.RemoveAt(index);
         }
 
-        public string GetScriptSource(object scriptType)
-        {
-            return Path.Combine("Scripts", "Values.lua");
-        }
-
         public void Write(string message)
         {
             Logs.Add(Tuple.Create<object, object>("Error", message));
+        }
+
+        public void Write(string message, params object[] args)
+        {
+            Logs.Add(Tuple.Create<object, object>("Error", string.Format(message, args)));
         }
 
         protected override void OnClosed(EventArgs e)
@@ -91,13 +86,12 @@ namespace WpfExample
             Logs.Clear();
             
             _engine.ReloadAllScripts();
-            _engine.Update();
             LoadData();
         }
 
         private void LoadData()
         {
-            var script = _engine.GetScript(this, 0);
+            var script = _engine.GetScript(this, "Scripts/Values.lua", ScriptSourceType.File);
             foreach (var obj in script.Run("GetValues") ?? Enumerable.Empty<object>())
             {
                 if (obj is LuaTable)

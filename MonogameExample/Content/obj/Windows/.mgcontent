@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SourceFileCollection xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Profile>Reach</Profile>
+  <Platform>Windows</Platform>
+  <Config />
+  <SourceFiles>
+    <File>C:/Users/Temdog007/Documents/GitHub/CSharp-Lua-Scripting-Engine/MonogameExample/Content/circle.png</File>
+    <File>C:/Users/Temdog007/Documents/GitHub/CSharp-Lua-Scripting-Engine/MonogameExample/Content/font.spritefont</File>
+  </SourceFiles>
+</SourceFileCollection>

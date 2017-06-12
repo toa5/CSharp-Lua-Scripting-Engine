@@ -49,8 +49,7 @@
   <ItemGroup>
     <Compile Include="DefaultConsole.cs" />
     <Compile Include="DefaultScriptingEngine.cs" />
-    <Compile Include="ILuaConsole.cs" />
-    <Compile Include="IScriptable.cs" />
+    <Compile Include="IScriptingEngineConsole.cs" />
     <Compile Include="IScriptingEngine.cs" />
     <Compile Include="LuaExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

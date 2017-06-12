@@ -1,25 +1,20 @@
-﻿using NLua;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace CSharp_Lua_Scripting_Engine
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="T">The script type</typeparam>
-    public interface IScriptingEngine<T>
+    public interface IScriptingEngine<T> where T : Script
     {
         /// <summary>
         /// Gets all the scripts
         /// </summary>
         /// <returns></returns>
-        IEnumerable<Script<T>> AllScripts { get; }
+        IEnumerable<T> AllScripts { get; }
 
         /// <summary>
-        /// Console for writing Script<T> errors
+        /// Console for writing T<T> errors
         /// </summary>
-        ILuaConsole Console { get; }
+        IScriptingEngineConsole Console { get; }
 
         /// <summary>
         /// The place where the updated scripts will be saved when reloading
@@ -34,40 +29,30 @@ namespace CSharp_Lua_Scripting_Engine
         /// <summary>
         /// Gets the script
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="type"></param>
+        /// <param name="owner"></param>
+        /// <param name="sourceName"></param>
         /// <param name="script"></param>
-        /// <returns>if true, the script was loaded, else it was pulled from a cache</returns>
-        bool GetScript(IScriptable key, T scriptType, out Script<T> script);
+        /// <param name="scrptSourceType"></param>
+        /// <returns>If the script had to be loaded, return true. Else, returns false</returns>
+        bool TryGetScript(object owner, string sourceName, out T script, ScriptSourceType scrptSourceType = ScriptSourceType.File);
 
         /// <summary>
         /// Gets the script
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="scriptType"></param>
+        /// <param name="owner"></param>
+        /// <param name="sourceName"></param>
+        /// <param name="scrptSourceType"></param>
         /// <returns></returns>
-        Script<T> GetScript(IScriptable key, T scriptType);
+        T GetScript(object owner, string sourceName, ScriptSourceType scrptSourceType = ScriptSourceType.File);
 
         /// <summary>
         /// Gets all scripts based on the predicate
         /// </summary>
-        /// <param name="key"></param>
-        /// <returns>Sequence of Script<T> objects</returns>
-        IEnumerable<Script<T>> GetScripts(Predicate<IScriptable> predicate);
+        /// <param name="owner"></param>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        IEnumerable<T> GetScripts(object owner, Predicate<T> predicate);
 
-        /// <summary>
-        /// Gets all scripts based on the predicate
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns>Sequence of Script<T> objects</returns>
-        IEnumerable<Script<T>> GetScripts(Predicate<T> predicate);
-
-        /// <summary>
-        /// Gets all scripts based on the predicate
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns>Sequence of Script<T> objects</returns>
-        IEnumerable<Script<T>> GetScripts(Predicate<Script<T>> predicate);
         /// <summary>
         /// Reloads all the scripts
         /// </summary>
@@ -76,20 +61,15 @@ namespace CSharp_Lua_Scripting_Engine
         /// <summary>
         /// Reloads the scripts based on the predicate
         /// </summary>
-        void ReloadScripts(Predicate<T> predicate);
+        /// <param name="owner"></param>
+        /// <param name="predicate"></param>
+        void ReloadScripts(object owner, Predicate<T> predicate);
 
         /// <summary>
-        /// Reloads the scripts based on the predicate
+        /// Removes all scripts based on the predicate
         /// </summary>
-        void ReloadScripts(Predicate<IScriptable> predicate);
-        /// <summary>
-        /// Reloads the scripts based on the predicate
-        /// </summary>
-        void ReloadScripts(Predicate<Script<T>> predicate);
-
-        /// <summary>
-        /// Updates
-        /// </summary>
-        void Update();
+        /// <param name="owner"></param>
+        /// <param name="predicate"></param>
+        void RemoveAllScripts(object owner, Predicate<T> predicate);
     }
 }

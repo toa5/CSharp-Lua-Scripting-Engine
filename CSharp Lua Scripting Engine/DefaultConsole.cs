@@ -2,7 +2,7 @@
 
 namespace CSharp_Lua_Scripting_Engine
 {
-    public class DefaultConsole : ILuaConsole
+    public class DefaultConsole : IScriptingEngineConsole
     {
         public void Clear()
         {
@@ -17,6 +17,11 @@ namespace CSharp_Lua_Scripting_Engine
         public void Write(string message)
         {
             Console.WriteLine(message);
+        }
+
+        public void Write(string message, params object[] args)
+        {
+            Console.WriteLine(message, args);
         }
     }
 }
