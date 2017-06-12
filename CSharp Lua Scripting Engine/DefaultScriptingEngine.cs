@@ -1,12 +1,11 @@
-﻿using NLua;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
 namespace CSharp_Lua_Scripting_Engine
 {
-    public class DefaultScriptingEngine<T> : IScriptingEngine<T>, IDisposable where T : Script
+    public class DefaultScriptingEngine<T> : IScriptingEngine<T> where T : Script
     {
         protected List<T> _scripts;
 

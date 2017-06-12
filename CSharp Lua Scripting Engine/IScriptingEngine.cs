@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CSharp_Lua_Scripting_Engine
 {
-    public interface IScriptingEngine<T> where T : Script
+    public interface IScriptingEngine<T> : IDisposable where T : Script
     {
         /// <summary>
         /// Gets all the scripts
