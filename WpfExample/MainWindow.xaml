@@ -10,7 +10,7 @@
     <DockPanel>
         <ScrollViewer DockPanel.Dock="Top">
             <Grid>
-                <DataGrid  ItemsSource="{Binding Logs}" CanUserReorderColumns="True" CanUserResizeColumns="true" CanUserResizeRows="true" CanUserSortColumns="true"/>
+                <DataGrid  ItemsSource="{Binding Logs}" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserResizeRows="True" CanUserSortColumns="True"/>
             </Grid>
         </ScrollViewer>
         <StackPanel DockPanel.Dock="Bottom">

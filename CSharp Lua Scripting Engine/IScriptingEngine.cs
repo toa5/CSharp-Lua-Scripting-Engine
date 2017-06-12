@@ -4,8 +4,6 @@ using System.Collections.Generic;
 
 namespace CSharp_Lua_Scripting_Engine
 {
-    public delegate void ScriptReloadedEvent(ScriptReloadedEventArgs args);
-
     /// <summary>
     /// 
     /// </summary>
@@ -93,14 +91,5 @@ namespace CSharp_Lua_Scripting_Engine
         /// Updates
         /// </summary>
         void Update();
-    }
-    public class ScriptReloadedEventArgs : EventArgs
-    {
-        public ScriptReloadedEventArgs(IScriptable owner)
-        {
-            Owner = owner;
-        }
-
-        public IScriptable Owner { get; private set; }
     }
 }
