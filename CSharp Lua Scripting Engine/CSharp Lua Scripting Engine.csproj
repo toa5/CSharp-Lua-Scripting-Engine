@@ -49,11 +49,13 @@
   <ItemGroup>
     <Compile Include="DefaultConsole.cs" />
     <Compile Include="DefaultScriptingEngine.cs" />
+    <Compile Include="IScriptNameContainer.cs" />
     <Compile Include="IScriptingEngineConsole.cs" />
     <Compile Include="IScriptingEngine.cs" />
     <Compile Include="LuaExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Script.cs" />
+    <Compile Include="DefaultScriptNameContainer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

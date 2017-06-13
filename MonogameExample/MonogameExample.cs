@@ -57,9 +57,11 @@ namespace MonogameExample
 
             spriteFont = Content.Load<SpriteFont>("font");
 
-            engine = new DefaultScriptingEngine<GameScript>(this)
+            engine = new DefaultScriptingEngine<GameScript>(
+                new DefaultScriptNameContainer(
+                     @"C:\Users\Temdog007\Documents\GitHub\CSharp-Lua-Scripting-Engine\MonogameExample\Scripts"),
+                this)
             {
-                SourceDirectory = @"C:\Users\Temdog007\Documents\GitHub\CSharp-Lua-Scripting-Engine\MonogameExample\Scripts",
                 DestinationDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Scripts")
             };
             Services.AddService<IScriptingEngine<GameScript>>(engine);
@@ -68,11 +70,11 @@ namespace MonogameExample
         private void LoadObjects()
         {
             ScriptableActor fpsCounter = new ScriptableActor(this);
-            fpsCounter.AddScript("Scripts/FPSCounter.lua");
+            fpsCounter.AddScript("FPSCounter");
             Components.Add(fpsCounter);
 
             ScriptableActor circle = new ScriptableActor(this);
-            circle.AddScript("Scripts/Circle.lua");
+            circle.AddScript("Circle");
             Components.Add(circle);
         }
 

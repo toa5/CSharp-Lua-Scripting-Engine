@@ -25,10 +25,12 @@ namespace WpfExample
         {
             InitializeComponent();
 
-            _engine = new DefaultScriptingEngine<Script>(this)
+            _engine = new DefaultScriptingEngine<Script>(
+                new DefaultScriptNameContainer(
+                     // Source will need to be changed to match your source directory
+                     @"C:\Users\Temdog007\Documents\GitHub\CSharp-Lua-Scripting-Engine\WpfExample\Scripts"),
+                this)
             {
-                // Source will need to be changed to match your source directory
-                SourceDirectory = @"C:\Users\Temdog007\Documents\GitHub\CSharp-Lua-Scripting-Engine\WpfExample\Scripts",
                 DestinationDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Scripts")
             };
 
@@ -91,7 +93,7 @@ namespace WpfExample
 
         private void LoadData()
         {
-            var script = _engine.GetScript(this, "Scripts/Values.lua", ScriptSourceType.File);
+            var script = _engine.GetScript(this, "Values", ScriptSourceType.File);
             foreach (var obj in script.Run("GetValues") ?? Enumerable.Empty<object>())
             {
                 if (obj is LuaTable)

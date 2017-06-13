@@ -6,8 +6,6 @@ namespace MonogameExample
 {
     public class ScriptableActor : DrawableGameComponent
     {
-        protected readonly List<string> _scriptKeys = new List<string>();
-
         /// <summary>
         /// Should be toggled in case script change doesn't require re-intializing
         /// </summary>
@@ -23,7 +21,7 @@ namespace MonogameExample
             get
             {
                 var engine = Engine;
-                foreach (var script in engine.GetScripts(this, s => _scriptKeys.Contains(s.Source)))
+                foreach (var script in engine.GetScripts(this, s => true))
                 {
                     yield return script;
                 }
@@ -40,14 +38,12 @@ namespace MonogameExample
             {
                 script.Run("LoadContent", this);
             }
-            _scriptKeys.Add(source);
         }
 
-        public void RemoveScript(string source)
+        public void RemoveScript(string name)
         {
             var engine = Engine;
-            engine.RemoveAllScripts(this, s => s.Source.Equals(source));
-            _scriptKeys.RemoveAll(s => s.Equals(source));
+            engine.RemoveAllScripts(this, s => s.Name.Equals(name));
         }
 
         protected override void LoadContent()
@@ -77,7 +73,7 @@ namespace MonogameExample
             var engine = Engine;
             foreach (var script in GetScripts())
             {
-                yield return script.Run(methodName, OnScriptLoaded, args);
+                yield return script.Run(methodName, args);
             }
         }
 
@@ -85,14 +81,14 @@ namespace MonogameExample
         {
             foreach (var script in GetScripts())
             {
-                script.Run(methodName, OnScriptLoaded, args);
+                script.Run(methodName, args);
             }
         }
 
         protected IEnumerable<Script> GetScripts()
         {
             var engine = Engine;
-            foreach(var script in engine.GetScripts(this, s => _scriptKeys.Contains(s.Source)))
+            foreach(var script in engine.GetScripts(this, s => true))
             {
                 yield return script;
             }

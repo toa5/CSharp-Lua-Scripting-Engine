@@ -17,33 +17,33 @@ namespace CSharp_Lua_Scripting_Engine
         IScriptingEngineConsole Console { get; }
 
         /// <summary>
+        /// Mapping script names to source paths
+        /// </summary>
+        IScriptNameContainer ScriptSourceContainer { get; }
+
+        /// <summary>
         /// The place where the updated scripts will be saved when reloading
         /// </summary>
         string DestinationDirectory { get; set; }
 
         /// <summary>
-        /// The location of the scripts to be copied to the destination directory
-        /// </summary>
-        string SourceDirectory { get; set; }
-
-        /// <summary>
         /// Gets the script
         /// </summary>
         /// <param name="owner"></param>
-        /// <param name="sourceName"></param>
+        /// <param name="nameOrSource"></param>
         /// <param name="script"></param>
         /// <param name="scrptSourceType"></param>
         /// <returns>If the script had to be loaded, return true. Else, returns false</returns>
-        bool TryGetScript(object owner, string sourceName, out T script, ScriptSourceType scrptSourceType = ScriptSourceType.File);
+        bool TryGetScript(object owner, string name, out T script, ScriptSourceType scrptSourceType = ScriptSourceType.File);
 
         /// <summary>
         /// Gets the script
         /// </summary>
         /// <param name="owner"></param>
-        /// <param name="sourceName"></param>
+        /// <param name="nameOrSource"></param>
         /// <param name="scrptSourceType"></param>
         /// <returns></returns>
-        T GetScript(object owner, string sourceName, ScriptSourceType scrptSourceType = ScriptSourceType.File);
+        T GetScript(object owner, string name, ScriptSourceType scrptSourceType = ScriptSourceType.File);
 
         /// <summary>
         /// Gets all scripts based on the predicate
