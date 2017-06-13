@@ -70,6 +70,8 @@ namespace CSharp_Lua_Scripting_Engine
         /// </summary>
         /// <param name="owner"></param>
         /// <param name="predicate"></param>
-        void RemoveAllScripts(object owner, Predicate<T> predicate);
+        /// <param name="BeforeRemove"></param>
+        /// <param name="AfterRemove"></param>
+        void RemoveAllScripts(object owner, Predicate<T> predicate, Action<T> BeforeRemove = null, Action<T> AfterRemove = null);
     }
 }

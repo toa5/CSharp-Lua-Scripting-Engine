@@ -1,6 +1,6 @@
 ﻿using NLua;
 using System;
-using System.IO;
+using System.Collections.Generic;
 
 namespace CSharp_Lua_Scripting_Engine
 {
@@ -21,10 +21,10 @@ namespace CSharp_Lua_Scripting_Engine
 
     public class Script : IDisposable
     {
-        protected Lua _lua;
+        protected readonly Lua _lua;
 
-        private readonly object _owner;
         private readonly string _name;
+        private readonly object _owner;
         private DateTime _lastLog = new DateTime();
         private ScriptSourceType _scriptSourceType;
 
@@ -33,36 +33,65 @@ namespace CSharp_Lua_Scripting_Engine
             _scriptSourceType = scriptSourceType;
             _owner = owner;
             _name = name;
+            
+            // If the file got updated with a lua script with errors, don't crash
+            // Handle the exception, then set to null and try again later
+            _lua = new Lua();
+            _lua.LoadCLRPackage();
         }
 
         public IScriptingEngineConsole Console { get; set; }
 
-        public IScriptNameContainer NameContainer { get; set; }
-
-        /// <summary>
-        /// How many times the script was load/reloaded
-        /// </summary>
-        public int LoadedCount { get; protected set; }
+        public bool IsExecuting => _lua == null ? false : _lua.IsExecuting;
         public TimeSpan LogInterval { get; set; } = TimeSpan.FromSeconds(5);
-
         public LuaExceptionReaction LuaExceptionReaction { get; set; } = LuaExceptionReaction.LogToConsole;
+        public string Name => _name;
 
-        public bool NeedsReload { get; set; } = false;
+        public IScriptNameContainer NameContainer
+        {
+            get
+            {
+                return _container;
+            }
+            set
+            {
+                _container = value;
+                Reload();
+            }
+        } private IScriptNameContainer _container;
 
         public object Owner => _owner;
 
         public ScriptSourceType ScriptSourceType => _scriptSourceType;
 
-        public string Name => _name;
-
-        public bool Exists<TType>(string fullPath)
+        public void Reload()
         {
-            if (_lua == null || NeedsReload)
+            switch (_scriptSourceType)
             {
-                LoadScript();
+                case ScriptSourceType.File:
+                    _lua.DoFile(NameContainer[Name]);
+                    break;
+                case ScriptSourceType.Code:
+                    _lua.DoString(NameContainer[Name]);
+                    break;
+                default:
+                    throw new Exception(string.Format("Unhandled ScriptSourceType {0}", _scriptSourceType));
             }
-            var luaObj = _lua[fullPath];
-            return luaObj != null && luaObj.GetType() == typeof(TType);
+        }
+
+        public bool Exists<T>(string fullPath) where T : class
+        {
+            return (_lua?[fullPath] as T) != null;
+        }
+        
+        public Dictionary<object, object> GetTableDict(LuaTable table)
+        {
+            return _lua.GetTableDict(table);
+        }
+
+        public void NewTable(string fullPath)
+        {
+            _lua.NewTable(fullPath);
         }
 
         public void HandleException(Exception e)
@@ -97,30 +126,11 @@ namespace CSharp_Lua_Scripting_Engine
             }
         }
 
-        public bool MethodExists(string methodName)
-        {
-            if (_lua == null || NeedsReload)
-            {
-                LoadScript();
-            }
-            return (_lua[methodName] as LuaFunction) != null;
-        }
-
         public object[] Run(string methodName, params object[] args)
-        {
-            if (_lua == null || NeedsReload)
-            {
-                LoadScript();
-            }
-
-            return DoRun(methodName, args);
-        }
-
-        protected object[] DoRun(string methodName, params object[] args)
         {
             try
             {
-                return _lua.Run(methodName, args);
+                return _lua?.Run(methodName, args);
             }
             catch (Exception e)
             {
@@ -129,41 +139,17 @@ namespace CSharp_Lua_Scripting_Engine
             return null;
         }
 
-        protected virtual void LoadScript()
+        public T Run<T>(string methodName, params object[] args) where T : class
         {
-            if (_lua != null && _lua.IsExecuting)
-            {
-                throw new Exception("Can't load script while it's executing");
-            }
-
-            _lua?.Dispose();
             try
             {
-                // If the file got updated with a lua script with errors, don't crash
-                // Handle the exception, then set to null and try again later
-                _lua = new Lua();
-                _lua.LoadCLRPackage();
-
-                switch (_scriptSourceType)
-                {
-                    case ScriptSourceType.File:
-                        _lua.DoFile(NameContainer[Name]);
-                        break;
-                    case ScriptSourceType.Code:
-                        _lua.DoString(NameContainer[Name]);
-                        break;
-                    default:
-                        throw new Exception(string.Format("Unhandled ScriptSourceType {0}", _scriptSourceType));
-                }
-                NeedsReload = false;
-                ++LoadedCount;
+                return (T)(_lua.Run(methodName, args)[0]);
             }
             catch (Exception e)
             {
                 HandleException(e);
-                _lua?.Dispose();
-                _lua = null;
             }
+            return null;
         }
 
         #region IDisposable Support
@@ -187,7 +173,6 @@ namespace CSharp_Lua_Scripting_Engine
                     }
 
                     _lua?.Dispose();
-                    _lua = null;
                 }
 
                 disposedValue = true;

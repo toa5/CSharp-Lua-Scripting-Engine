@@ -93,27 +93,33 @@ namespace CSharp_Lua_Scripting_Engine
                 File.Copy(Path.Combine(ScriptSourceContainer.SourceDirectory, file),
                     Path.Combine(DestinationDirectory, file), true);
             }
-            _scripts.ForEach(script => script.NeedsReload = true);
+
+            foreach(var script in _scripts)
+            {
+                script.Reload();
+            }
         }
 
-        public void RemoveAllScripts(object owner, Predicate<T> predicate)
+        public void RemoveAllScripts(object owner, Predicate<T> predicate, Action<T> BeforeRemove = null, Action<T> AfterRemove = null)
         {
             foreach(var script in _scripts.Where(s => s.Owner == owner && predicate(s)).ToArray())
             {
+                BeforeRemove?.Invoke(script);
                 script.Dispose();
                 _scripts.Remove(script);
+                AfterRemove?.Invoke(script);
             }
         }
 
         private void DoReload(T script)
         {
-            script.NeedsReload = true;
             switch (script.ScriptSourceType)
             {
                 case ScriptSourceType.File:
                     string file = Path.GetFileName(script.Name);
                     File.Copy(Path.Combine(ScriptSourceContainer.SourceDirectory, file),
                         Path.Combine(DestinationDirectory, file), true);
+                    script.Reload();
                     break;
             }
         }

@@ -1,13 +1,17 @@
-﻿data = {}
-
-function LoadContent(actor)
+﻿function LoadContent(actor)
+	local data = {}
 	data.Position = Vector2(0,0)
 	data.Texture = actor.Game:LoadTexture('circle')
 	data.Batch = actor.Game.SpriteBatch
-	data.Color = Color.Green
+	data.Color = Color.Purple
+	return data
 end
 
-function Update(actor, gameTime)
+function EditContent(data)
+	data.Color = Color.Gray
+end
+
+function Update(data)
 	state = Keyboard.GetState();
 
 	if state:IsKeyDown(Keys.Up) then
@@ -26,14 +30,9 @@ function Update(actor, gameTime)
 	end
 end
 
-
-function Draw(actor, gameTime)
+function Draw(data)
 	data.Batch:Draw(data.Texture, data.Position, data.Color)
 end
 
-function UnloadContent(actor)
-end
-
-function GetData()
-	return data
+function UnloadContent(data)
 end

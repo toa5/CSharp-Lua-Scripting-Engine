@@ -69,12 +69,12 @@ namespace MonogameExample
 
         private void LoadObjects()
         {
-            ScriptableActor fpsCounter = new ScriptableActor(this);
-            fpsCounter.AddScript("FPSCounter");
+            ScriptableActor<GameScript> fpsCounter = new ScriptableActor<GameScript>(this);
+            fpsCounter.SetScript("FPSCounter");
             Components.Add(fpsCounter);
 
-            ScriptableActor circle = new ScriptableActor(this);
-            circle.AddScript("Circle");
+            ScriptableActor<GameScript> circle = new ScriptableActor<GameScript>(this);
+            circle.SetScript("Circle");
             Components.Add(circle);
         }
 
@@ -140,14 +140,24 @@ namespace MonogameExample
                 Clear();
                 Write("Cleared Logs");
             }
-            else if(state.IsKeyDown(Keys.R) && oldState.IsKeyUp(Keys.R))
+            else if (state.IsKeyDown(Keys.R) && oldState.IsKeyUp(Keys.R))
             {
                 var engine = Services.GetService<IScriptingEngine<GameScript>>();
                 engine.ReloadAllScripts();
                 Clear();
                 Write("Reloaded Scripts!");
             }
-            else if(state.IsKeyDown(Keys.Delete) && oldState.IsKeyUp(Keys.Delete))
+            else if (state.IsKeyDown(Keys.E) && oldState.IsKeyUp(Keys.E))
+            {
+                foreach (var actor in Components.
+                                Where(c => c is ScriptableActor<GameScript>).
+                                Select(c => c as ScriptableActor<GameScript>))
+                {
+                    actor.Reload();
+                }
+                Write("Edited content!");
+            }
+            else if (state.IsKeyDown(Keys.Delete) && oldState.IsKeyUp(Keys.Delete))
             {
                 while (Components.Count > 0)
                 {
