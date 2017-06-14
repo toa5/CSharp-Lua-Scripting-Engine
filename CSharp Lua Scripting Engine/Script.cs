@@ -24,14 +24,12 @@ namespace CSharp_Lua_Scripting_Engine
         protected readonly Lua _lua;
 
         private readonly string _name;
-        private readonly object _owner;
         private DateTime _lastLog = new DateTime();
         private ScriptSourceType _scriptSourceType;
 
-        public Script(object owner, string name, ScriptSourceType scriptSourceType = ScriptSourceType.File)
+        public Script(string name, ScriptSourceType scriptSourceType = ScriptSourceType.File)
         {
             _scriptSourceType = scriptSourceType;
-            _owner = owner;
             _name = name;
             
             // If the file got updated with a lua script with errors, don't crash
@@ -60,28 +58,33 @@ namespace CSharp_Lua_Scripting_Engine
             }
         } private IScriptNameContainer _container;
 
-        public object Owner => _owner;
-
         public ScriptSourceType ScriptSourceType => _scriptSourceType;
 
-        public void Reload()
+        public virtual void Reload()
         {
-            switch (_scriptSourceType)
+            try
             {
-                case ScriptSourceType.File:
-                    _lua.DoFile(NameContainer[Name]);
-                    break;
-                case ScriptSourceType.Code:
-                    _lua.DoString(NameContainer[Name]);
-                    break;
-                default:
-                    throw new Exception(string.Format("Unhandled ScriptSourceType {0}", _scriptSourceType));
+                switch (_scriptSourceType)
+                {
+                    case ScriptSourceType.File:
+                        _lua.DoFile(NameContainer[Name]);
+                        break;
+                    case ScriptSourceType.Code:
+                        _lua.DoString(NameContainer[Name]);
+                        break;
+                    default:
+                        throw new Exception(string.Format("Unhandled ScriptSourceType {0}", _scriptSourceType));
+                }
+            }
+            catch(Exception e)
+            {
+                HandleException(e);
             }
         }
 
-        public bool Exists<T>(string fullPath) where T : class
+        public bool Exists<F>(string fullPath) where F : class
         {
-            return (_lua?[fullPath] as T) != null;
+            return (_lua?[fullPath] as F) != null;
         }
         
         public Dictionary<object, object> GetTableDict(LuaTable table)
@@ -89,19 +92,19 @@ namespace CSharp_Lua_Scripting_Engine
             return _lua.GetTableDict(table);
         }
 
-        public void NewTable(string fullPath)
+        public void NewTable(string fullPath = "")
         {
             _lua.NewTable(fullPath);
         }
 
-        public void HandleException(Exception e)
+        public virtual void HandleException(Exception e)
         {
             switch (LuaExceptionReaction)
             {
                 case LuaExceptionReaction.LogToConsole:
                     if ((DateTime.Now - _lastLog) > LogInterval)
                     {
-                        Console?.Write(string.Format("Lua Error {0} {1}", e, e.InnerException));
+                        Console?.Write(e);
                         _lastLog = DateTime.Now;
                     }
                     break;
@@ -110,7 +113,7 @@ namespace CSharp_Lua_Scripting_Engine
                     {
                         if ((DateTime.Now - _lastLog) > LogInterval)
                         {
-                            Console.Write(string.Format("Lua Error {0} {1}", e, e.InnerException));
+                            Console.Write(e);
                             _lastLog = DateTime.Now;
                         }
                     }

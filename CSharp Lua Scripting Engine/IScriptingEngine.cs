@@ -3,19 +3,8 @@ using System.Collections.Generic;
 
 namespace CSharp_Lua_Scripting_Engine
 {
-    public interface IScriptingEngine<T> : IDisposable where T : Script
+    public interface IScriptingEngine : IDisposable
     {
-        /// <summary>
-        /// Gets all the scripts
-        /// </summary>
-        /// <returns></returns>
-        IEnumerable<T> AllScripts { get; }
-
-        /// <summary>
-        /// Console for writing T<T> errors
-        /// </summary>
-        IScriptingEngineConsole Console { get; }
-
         /// <summary>
         /// Mapping script names to source paths
         /// </summary>
@@ -27,23 +16,35 @@ namespace CSharp_Lua_Scripting_Engine
         string DestinationDirectory { get; set; }
 
         /// <summary>
-        /// Gets the script
+        /// Reloads all the scripts
         /// </summary>
-        /// <param name="owner"></param>
-        /// <param name="nameOrSource"></param>
-        /// <param name="script"></param>
-        /// <param name="scrptSourceType"></param>
-        /// <returns>If the script had to be loaded, return true. Else, returns false</returns>
-        bool TryGetScript(object owner, string name, out T script, ScriptSourceType scrptSourceType = ScriptSourceType.File);
+        void ReloadAllScripts();
+    }
+
+    public interface IScriptingEngine<T> : IScriptingEngine where T : Script
+    {
+        /// <summary>
+        /// Gets all the scripts
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<T> AllScripts { get; }
 
         /// <summary>
         /// Gets the script
         /// </summary>
-        /// <param name="owner"></param>
+        /// <param name="nameOrSource"></param>
+        /// <param name="script"></param>
+        /// <param name="scrptSourceType"></param>
+        /// <returns>If the script had to be loaded, return true. Else, returns false</returns>
+        bool TryGetScript(string name, out T script, ScriptSourceType scrptSourceType = ScriptSourceType.File);
+
+        /// <summary>
+        /// Gets the script
+        /// </summary>
         /// <param name="nameOrSource"></param>
         /// <param name="scrptSourceType"></param>
         /// <returns></returns>
-        T GetScript(object owner, string name, ScriptSourceType scrptSourceType = ScriptSourceType.File);
+        T GetScript(string name, ScriptSourceType scrptSourceType = ScriptSourceType.File);
 
         /// <summary>
         /// Gets all scripts based on the predicate
@@ -51,19 +52,14 @@ namespace CSharp_Lua_Scripting_Engine
         /// <param name="owner"></param>
         /// <param name="predicate"></param>
         /// <returns></returns>
-        IEnumerable<T> GetScripts(object owner, Predicate<T> predicate);
-
-        /// <summary>
-        /// Reloads all the scripts
-        /// </summary>
-        void ReloadAllScripts();
+        IEnumerable<T> GetScripts(Predicate<T> predicate);
 
         /// <summary>
         /// Reloads the scripts based on the predicate
         /// </summary>
         /// <param name="owner"></param>
         /// <param name="predicate"></param>
-        void ReloadScripts(object owner, Predicate<T> predicate);
+        void ReloadScripts(Predicate<T> predicate);
 
         /// <summary>
         /// Removes all scripts based on the predicate
@@ -72,6 +68,14 @@ namespace CSharp_Lua_Scripting_Engine
         /// <param name="predicate"></param>
         /// <param name="BeforeRemove"></param>
         /// <param name="AfterRemove"></param>
-        void RemoveAllScripts(object owner, Predicate<T> predicate, Action<T> BeforeRemove = null, Action<T> AfterRemove = null);
+        void RemoveAllScripts(Predicate<T> predicate, Action<T> BeforeRemove = null, Action<T> AfterRemove = null);
+    }
+
+    public interface IScriptingEngine<T, K> : IScriptingEngine<T> where T : Script
+    {
+        /// <summary>
+        /// Console for writing T<T> errors
+        /// </summary>
+        IScriptingEngineConsole<K> Console { get; }
     }
 }

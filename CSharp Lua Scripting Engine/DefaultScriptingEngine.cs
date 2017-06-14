@@ -5,11 +5,11 @@ using System.Linq;
 
 namespace CSharp_Lua_Scripting_Engine
 {
-    public class DefaultScriptingEngine<T> : IScriptingEngine<T> where T : Script
+    public class DefaultScriptingEngine<T,K> : IScriptingEngine<T, K> where T : Script
     {
         protected List<T> _scripts;
 
-        public DefaultScriptingEngine(IScriptNameContainer container, IScriptingEngineConsole console)
+        public DefaultScriptingEngine(IScriptNameContainer container, IScriptingEngineConsole<K> console)
         {
             _scripts = new List<T>();
             this.Console = console;
@@ -20,15 +20,15 @@ namespace CSharp_Lua_Scripting_Engine
 
         public IEnumerable<T> AllScripts => _scripts;
 
-        public IScriptingEngineConsole Console { get; private set; }
+        public IScriptingEngineConsole<K> Console { get; private set; }
 
         public IScriptNameContainer ScriptSourceContainer { get; private set; }
 
         public string DestinationDirectory { get; set; }
 
-        public T GetScript(object owner, string name, ScriptSourceType type = ScriptSourceType.File)
+        public T GetScript(string name, ScriptSourceType type = ScriptSourceType.File)
         {
-            var list = _scripts.Where(s => s.Owner == owner && s.Name.Equals(name) && s.ScriptSourceType == type);
+            var list = _scripts.Where(s => s.Name.Equals(name) && s.ScriptSourceType == type);
 
             T script = null;
 
@@ -41,7 +41,7 @@ namespace CSharp_Lua_Scripting_Engine
                 }
             }
            
-            script = (T)Activator.CreateInstance(typeof(T), owner, name, type);
+            script = (T)Activator.CreateInstance(typeof(T), name, type);
             script.Console = this.Console;
             script.NameContainer = ScriptSourceContainer;
             script.LuaExceptionReaction = LuaExceptionReaction.LogToConsole;
@@ -49,10 +49,10 @@ namespace CSharp_Lua_Scripting_Engine
             return script;
         }
 
-        public bool TryGetScript(object owner, string name, out T script, 
+        public bool TryGetScript(string name, out T script, 
                             ScriptSourceType type = ScriptSourceType.File)
         {
-            var list = _scripts.Where(s => s.Owner == owner && s.Name.Equals(name) && s.ScriptSourceType == type);
+            var list = _scripts.Where(s => s.Name.Equals(name) && s.ScriptSourceType == type);
 
             if(list.Count() > 0)
             {
@@ -63,7 +63,7 @@ namespace CSharp_Lua_Scripting_Engine
                 }
             }
             
-            script = (T)Activator.CreateInstance(typeof(T), owner, name, type);
+            script = (T)Activator.CreateInstance(typeof(T), name, type);
             script.Console = this.Console;
             script.NameContainer = this.ScriptSourceContainer;
             script.LuaExceptionReaction = LuaExceptionReaction.LogToConsole;
@@ -71,27 +71,32 @@ namespace CSharp_Lua_Scripting_Engine
             return true;
         }
         
-        public IEnumerable<T> GetScripts(object owner, Predicate<T> predicate)
+        public IEnumerable<T> GetScripts(Predicate<T> predicate)
         {
-            return _scripts.Where(script => script.Owner == owner && predicate(script));
+            return _scripts.Where(script => predicate(script));
         }
 
-        public void ReloadScripts(object owner, Predicate<T> predicate)
+        public void ReloadScripts(Predicate<T> predicate)
         {
-            DoReload(GetScripts(owner, predicate));
+            DoReload(GetScripts(predicate));
         }
 
-        public void ReloadScript(object owner, string name)
+        public void ReloadScript(string name)
         {
-            DoReload(GetScript(owner, name));
+            DoReload(GetScript(name));
         }
         
         public virtual void ReloadAllScripts()
         {
-            foreach (string file in Directory.GetFiles(ScriptSourceContainer.SourceDirectory).Select(f => Path.GetFileName(f)))
+            if(DestinationDirectory.Last() != '\\')
             {
-                File.Copy(Path.Combine(ScriptSourceContainer.SourceDirectory, file),
-                    Path.Combine(DestinationDirectory, file), true);
+                DestinationDirectory += '\\';
+            }
+
+            foreach (string file in Directory.GetFiles
+                (ScriptSourceContainer.SourceDirectory, "*", SearchOption.AllDirectories))
+            {
+                File.Copy(file, file.Replace(ScriptSourceContainer.SourceDirectory, DestinationDirectory), true);
             }
 
             foreach(var script in _scripts)
@@ -100,9 +105,9 @@ namespace CSharp_Lua_Scripting_Engine
             }
         }
 
-        public void RemoveAllScripts(object owner, Predicate<T> predicate, Action<T> BeforeRemove = null, Action<T> AfterRemove = null)
+        public void RemoveAllScripts(Predicate<T> predicate, Action<T> BeforeRemove = null, Action<T> AfterRemove = null)
         {
-            foreach(var script in _scripts.Where(s => s.Owner == owner && predicate(s)).ToArray())
+            foreach(var script in _scripts.Where(s => predicate(s)).ToArray())
             {
                 BeforeRemove?.Invoke(script);
                 script.Dispose();
